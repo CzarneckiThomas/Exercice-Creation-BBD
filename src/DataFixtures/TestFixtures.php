@@ -84,6 +84,5 @@ class TestFixtures extends Fixture
             $student->setFirstname($studentFirstName);
             $student->setLastname($studentLastName);
             $student->setEmail($studentEmail);
-            
 
-        
+            
