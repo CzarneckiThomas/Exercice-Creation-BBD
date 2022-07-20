@@ -30,6 +30,60 @@ class TestFixtures extends Fixture
         $this->loadTags($manager, $faker);
     }
 
+
+
+    public function loadSchoolYears(ObjectManager $manager, FakerGenerator $faker)
+    {
+        $schoolYearDatas = [
+            [
+                'name' => 'Alpha',
+                'started_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2022-07-01 09:00:00'),
+                'finished_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2022-11-01 09:00:00'),
+            ],
+            [
+                'name' => 'Beta',
+                'started_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2022-12-01 09:00:00'),
+                'finished_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-03-01 09:00:00'),
+            ],
+            [
+                'name' => 'Omega',
+                'started_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-04-01 09:00:00'),
+                'finished_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-07-01 09:00:00'),
+            ]
+        ];
+
+        foreach ($schoolYearDatas as $schoolYearData) {
+            $schoolYear = new SchoolYear();
+            $schoolYear->setName($schoolYearData['name']);
+            $schoolYear->setStartedAt($schoolYearData['started_at']);
+            $schoolYear->setEndDateAt($schoolYearData['finished_at']);
+
+            
+            $manager->persist($schoolYear);
+        }
+     
+        for ($i = 0; $i < 10; $i++) {
+            $schoolYear = new SchoolYear();
+            $schoolYear->setName($faker->words(3,true));
+
+            $date = $faker->dateTimeBetween('-6 month', '+6month');
+            $date = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', "2022-{$date->format('m-d H:i:s')}");
+
+            $schoolYear->setStartedAt($date);
+           
+
+
+            $date = $faker->dateTimeBetween('-6 month', '+6 month');
+            $date = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', "2022-{$date->format('m-d H:i:s')}");
+
+            $schoolYear->setEndDateAt($date);
+
+            $manager->persist($schoolYear);
+        }
+
+        $manager->flush();
+    }
+
     public function loadProjects(ObjectManager $manager, FakerGenerator $faker): void
     {
         $projectDatas = [
@@ -67,86 +121,87 @@ class TestFixtures extends Fixture
         $manager->flush();
     }
 
-    public function loadSchoolYears(ObjectManager $manager, FakerGenerator $faker)
-    {
-        $schoolYearDatas = [
-            [
-                'name' => 'Alpha',
-                'started_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2022-07-01 09:00:00'),
-                'finished_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2022-11-01 09:00:00'),
-            ],
-            [
-                'name' => 'Beta',
-                'started_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2022-12-01 09:00:00'),
-                'finished_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-03-01 09:00:00'),
-            ],
-            [
-                'name' => 'Omega',
-                'started_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-04-01 09:00:00'),
-                'finished_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-07-01 09:00:00'),
-            ]
-        ];
-
-        foreach ($schoolYearDatas as $schoolYearData) {
-            $schoolYear = new SchoolYear();
-            $schoolYear->setName($schoolYearData['name']);
-            $schoolYear->setStartedAt($schoolYearData['started_at']);
-            $schoolYear->setFinishedAt($schoolYearData['finished_at']);
-
-            
-            $manager->persist($schoolYear);
-        }
-     
-        for ($i = 0; $i < 10; $i++) {
-            $schoolYear = new SchoolYear();
-            $schoolYear->setName($faker->word());
-
-            $date = $faker->dateTimeBetween('now', 2032);
-            $date = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', "2022-{$date->format('m-d H:i:s')}");
-
-            $schoolYear->setStartedAt($date);
-           
-
-
-            $date2 = $faker->dateTimeBetween($date, '+6 month');
-            $date2 = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', "2022-{$date->format('m-d H:i:s')}");
-
-            $schoolYear->setFinishedAt($date2);
-
-            $manager->persist($schoolYear);
-        }
-
-        $manager->flush();
-    }
+    
 
     public function loadStudents(ObjectManager $manager, FakerGenerator $faker): void
     {
-        $students = [
-            'Foo',
-            'Bar',
-            'Baz',
+        $repository = $this->doctrine->getRepository(SchoolYear::class);
+        $schoolYears = $repository->findAll();
+
+        $repository = $this->doctrine->getRepository(Tag::class);
+        $tags = $repository->findAll();
+
+        $studentDatas = 
+        [
+            [
+                'Firstname' => 'Thomas',
+                'Lastname' => 'Czar',
+                'schoolYear' => $schoolYears[0],
+                'tags' => [$tags[0], $tags[1]],
+                'Email' => 'exemple@orange.fr'
+            ],
+
+            [
+                'Firstname' => 'Marion',
+                'Lastname' => 'Lero',
+                'schoolYear' => $schoolYears[1],
+                'tags' => [$tags[2], $tags[0]],
+                'Email' => 'exemple@free.fr'
+            ],
+
+            [
+                'Firstname' => 'Toto',
+                'Lastname' => 'Tata',
+                'schoolYear' => $schoolYears[2],
+                'tags' => [$tags[1], $tags[2]],
+                'Email' => 'exemple@sfr.fr'
+            ],
+
         ];
+
         
-        foreach ($students as $student) {
+        foreach ($studentDatas as $studentData) {
             $student = new Student();
-            $student->setFirstname($student['firstname']);
-            $student->setLastname($student['lastname']);
-            $student->setEmail($student['email']);
-            $manager->persist($student);
+            $student->setFirstname($studentData['firstname']);
+            $student->setLastname($studentData['lastname']);
+            $student->setEmail($studentData['Email']);
+            $student->setSuccess(null);
+            $student->setSchoolYear($studentData['schoolYear']);
+
+            foreach ($studentData['tags'] as $tag) {
+                $student->addTag($tag);
+            }
+
+            $manager->persist($studentData);
 
         }
 
-        for ($i = 0; $i < 10; $i++) {
-            $student = new SchoolYear();
+        for ($i = 0; $i < 100; $i++) {
+            $student = new Student();
             $student->setFirstname($faker->name());
             $student->setLastname($faker->name());
             $student->setEmail($faker->email());
+            $student->setSucess(null);
+            $schoolYear = $faker->randomElements($schoolYears)[0];
+            $student->setSchoolYear($schoolYear);
+
 
             $manager->persist($student);
 
-        }
-        $manager->flush();
-    }
+             // génération d'un nombre aléatoire compris entre 0 et 4 inclus
+             $count = random_int(0, 4);
+             $studentTags = $faker->randomElements($tags, $count);
+ 
+             foreach ($studentTags as $tag) {
+                 $student->addTag($tag);
+             }
+ 
+             $manager->persist($student);
+         }
+         $manager->flush();
+     }
+
+        
 
     public function loadTags(ObjectManager $manager, FakerGenerator $faker): void
     {
@@ -169,8 +224,6 @@ class TestFixtures extends Fixture
         for ($i = 0; $i < 10; $i++) {
             $tag = new Tag();
             $tag->setName($faker->word());
-            
-
             $manager->persist($tag);
 
         }
