@@ -56,7 +56,7 @@ class TestFixtures extends Fixture
             $schoolYear = new SchoolYear();
             $schoolYear->setName($schoolYearData['name']);
             $schoolYear->setStartedAt($schoolYearData['started_at']);
-            $schoolYear->setEndDateAt($schoolYearData['finished_at']);
+            $schoolYear->setFinishedAt($schoolYearData['finished_at']);
 
             
             $manager->persist($schoolYear);
@@ -76,7 +76,7 @@ class TestFixtures extends Fixture
             $date = $faker->dateTimeBetween('-6 month', '+6 month');
             $date = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', "2022-{$date->format('m-d H:i:s')}");
 
-            $schoolYear->setEndDateAt($date);
+            $schoolYear->setFinishedAt($date);
 
             $manager->persist($schoolYear);
         }
@@ -84,44 +84,6 @@ class TestFixtures extends Fixture
         $manager->flush();
     }
 
-    public function loadProjects(ObjectManager $manager, FakerGenerator $faker): void
-    {
-        $projectDatas = [
-            [
-                'name' => 'Site Particulier',
-                'description' => 'Creation de site pour particulier'
-            ],
-            [
-                'name' => 'Site Associations',
-                'description' => 'Creation de site pour Assos'
-            ],
-            [
-                'name' => 'Site Entreprise',
-                'description' => 'Creation de site pour Entreprise'
-            ],
-            
-        ];
-
-        foreach ($projectDatas as $projectData) {
-            $project = new Project();
-            $project->setName($projectData['name']);
-            $project->setDescription($projectData['description']);
-            
-            $manager->persist($project);
-        }
-
-        for ($i = 0; $i < 10; $i++) {
-            $project = new Project();
-            $project->setName($faker->word());
-            $project->setDescription($faker->paragraph());
-
-            $manager->persist($project);
-        }
-
-        $manager->flush();
-    }
-
-    
 
     public function loadStudents(ObjectManager $manager, FakerGenerator $faker): void
     {
@@ -201,7 +163,44 @@ class TestFixtures extends Fixture
          $manager->flush();
      }
 
-        
+    public function loadProjects(ObjectManager $manager, FakerGenerator $faker): void
+    {
+        $projectDatas = [
+            [
+                'name' => 'Site Particulier',
+                'description' => 'Creation de site pour particulier'
+            ],
+            [
+                'name' => 'Site Associations',
+                'description' => 'Creation de site pour Assos'
+            ],
+            [
+                'name' => 'Site Entreprise',
+                'description' => 'Creation de site pour Entreprise'
+            ],
+            
+        ];
+
+        foreach ($projectDatas as $projectData) {
+            $project = new Project();
+            $project->setName($projectData['name']);
+            $project->setDescription($projectData['description']);
+            
+            $manager->persist($project);
+        }
+
+        for ($i = 0; $i < 10; $i++) {
+            $project = new Project();
+            $project->setName($faker->word());
+            $project->setDescription($faker->paragraph());
+
+            $manager->persist($project);
+        }
+
+        $manager->flush();
+    }
+
+      
 
     public function loadTags(ObjectManager $manager, FakerGenerator $faker): void
     {
