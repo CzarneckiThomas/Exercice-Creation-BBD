@@ -41,7 +41,7 @@ class TestFixtures extends Fixture
         foreach ($projectNames as $projectName) {
             $project = new Project();
             $project->setName($projectName);
-            $project->setDescription($projectDescription);
+            $project->setDescription($projectName['description']);
             
             $manager->persist($project);
         }
@@ -59,17 +59,17 @@ class TestFixtures extends Fixture
 
     public function loadSchoolYears(ObjectManager $manager, FakerGenerator $faker)
     {
-        $schoolYearNames = [
+        $schoolYears = [
             '2022',
             '2023',
             '2024',
         ];
 
-        foreach ($schoolYearNames as $schoolYearName) {
+        foreach ($schoolYears as $schoolYear) {
             $schoolYear = new SchoolYear();
-            $schoolYear->setName($schoolYearName);
-            $schoolYear->setStarted_at($schoolYearStart);
-            $schoolYear->setFinished_at($schoolYearEnd);
+            $schoolYear->setName($schoolYear);
+            $schoolYear->setStarted_at($schoolYear['started_at']);
+            $schoolYear->setFinished_at($schoolYear['finished_at']);
 
             
             $manager->persist($schoolyear);
@@ -82,8 +82,8 @@ class TestFixtures extends Fixture
             $date = $faker->dateTimeThisYear();
             $date = DateTimeImmutable::createFromInterface($date);
 
-            $schoolYear->setStarted_at($date)
-            $schoolYear->setFinished_at($faker->
+            $schoolYear->setStarted_at($date);
+            // $schoolYear->setFinished_at($faker->);
             $manager->persist($schoolYear);
         }
 
@@ -92,18 +92,22 @@ class TestFixtures extends Fixture
 
     public function loadStudents(ObjectManager $manager, FakerGenerator $faker): void
     {
+        $students = [
+            'Foo',
+            'Bar',
+            'Baz',
+        ];
         
         foreach ($students as $student) {
             $student = new Student();
-            $student->setFirstname($studentFirstName);
-            $student->setLastname($studentLastName);
-            $student->setEmail($studentEmail);
-
+            $student->setFirstname($student['firstname']);
+            $student->setLastname($student['lastname']);
+            $student->setEmail($student['email']);
             $manager->persist($student);
 
         }
 
-        for (($i = 0; $i < 10; $i++)) {
+        for ($i = 0; $i < 10; $i++) {
             $student = new SchoolYear();
             $student->setFirstname($faker->name());
             $student->setLastname($faker->name());
@@ -117,8 +121,14 @@ class TestFixtures extends Fixture
 
     public function loadTags(ObjectManager $manager, FakerGenerator $faker): void
     {
+        $tagNames = [
+            'HTML',
+            'CSS',
+            'Javascript',
+        ];
         
-        foreach ($tags as $tag) {
+
+        foreach ($tagNames as $tagName) {
             $tag = new Tag();
             $tag->setName($tagName);
             
@@ -127,7 +137,7 @@ class TestFixtures extends Fixture
 
         }
 
-        for (($i = 0; $i < 10; $i++)) {
+        for ($i = 0; $i < 10; $i++) {
             $tag = new Tag();
             $tag->setName($faker->word());
             
@@ -137,7 +147,7 @@ class TestFixtures extends Fixture
         }
         $manager->flush();
     }
-
+}
     
 
 
