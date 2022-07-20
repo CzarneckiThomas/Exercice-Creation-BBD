@@ -32,16 +32,26 @@ class TestFixtures extends Fixture
 
     public function loadProjects(ObjectManager $manager, FakerGenerator $faker): void
     {
-        $projectNames = [
-            'Site Particuliers',
-            'Site Associations',
-            'Site Entreprises',
+        $projectDatas = [
+            [
+                'name' => 'Site Particulier',
+                'description' => 'Creation de site pour particulier'
+            ],
+            [
+                'name' => 'Site Associations',
+                'description' => 'Creation de site pour Assos'
+            ],
+            [
+                'name' => 'Site Entreprise',
+                'description' => 'Creation de site pour Entreprise'
+            ],
+            
         ];
 
-        foreach ($projectNames as $projectName) {
+        foreach ($projectDatas as $projectData) {
             $project = new Project();
-            $project->setName($projectName);
-            $project->setDescription($projectName['description']);
+            $project->setName($projectData['name']);
+            $project->setDescription($projectData['description']);
             
             $manager->persist($project);
         }
@@ -59,31 +69,50 @@ class TestFixtures extends Fixture
 
     public function loadSchoolYears(ObjectManager $manager, FakerGenerator $faker)
     {
-        $schoolYears = [
-            '2022',
-            '2023',
-            '2024',
+        $schoolYearDatas = [
+            [
+                'name' => 'Alpha',
+                'started_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2022-07-01 09:00:00'),
+                'finished_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2022-11-01 09:00:00'),
+            ],
+            [
+                'name' => 'Beta',
+                'started_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2022-12-01 09:00:00'),
+                'finished_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-03-01 09:00:00'),
+            ],
+            [
+                'name' => 'Omega',
+                'started_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-04-01 09:00:00'),
+                'finished_at' => DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-07-01 09:00:00'),
+            ]
         ];
 
-        foreach ($schoolYears as $schoolYear) {
+        foreach ($schoolYearDatas as $schoolYearData) {
             $schoolYear = new SchoolYear();
-            $schoolYear->setName($schoolYear);
-            $schoolYear->setStarted_at($schoolYear['started_at']);
-            $schoolYear->setFinished_at($schoolYear['finished_at']);
+            $schoolYear->setName($schoolYearData['name']);
+            $schoolYear->setStartedAt($schoolYearData['started_at']);
+            $schoolYear->setFinishedAt($schoolYearData['finished_at']);
 
             
-            $manager->persist($schoolyear);
+            $manager->persist($schoolYear);
         }
-
+     
         for ($i = 0; $i < 10; $i++) {
             $schoolYear = new SchoolYear();
-            $schoolYear->setName($faker->numberBetween(2022, 2032));
+            $schoolYear->setName($faker->word());
 
-            $date = $faker->dateTimeThisYear();
-            $date = DateTimeImmutable::createFromInterface($date);
+            $date = $faker->dateTimeBetween('now', 2032);
+            $date = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', "2022-{$date->format('m-d H:i:s')}");
 
-            $schoolYear->setStarted_at($date);
-            // $schoolYear->setFinished_at($faker->);
+            $schoolYear->setStartedAt($date);
+           
+
+
+            $date2 = $faker->dateTimeBetween($date, '+6 month');
+            $date2 = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', "2022-{$date->format('m-d H:i:s')}");
+
+            $schoolYear->setFinishedAt($date2);
+
             $manager->persist($schoolYear);
         }
 
